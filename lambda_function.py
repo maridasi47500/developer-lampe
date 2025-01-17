@@ -1,6 +1,8 @@
 import json
 from alexa.skills.smarthome import AlexaResponse
 import requests
+import colorsys
+
 
 aws_dynamodb = {}
 #          North America: https://api.amazonalexa.com/v3/events
