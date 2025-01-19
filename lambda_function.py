@@ -2,17 +2,25 @@ import json
 from alexa.skills.smarthome import AlexaResponse
 import requests
 import colorsys
+import logging
+import urllib.request
+import urllib.parse
+from urllib.error import HTTPError
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 aws_dynamodb = {}
 #          North America: https://api.amazonalexa.com/v3/events
 #Europe and India: https://api.eu.amazonalexa.com/v3/events
 #Far East and Australia: https://api.fe.amazonalexa.com/v3/events
 #
-client_id = "Your Client Id"
+client_id = "xxx"
 # TODO: Update with your Client Secret for calling the LWA API.
-client_secret = "Your Client Secret"
+client_secret = "xx"
+
 # TODO: Update with your Endpoint Id.
-endpoint_id = "device_id"
+endpoint_id = "xxx"
+access_token_from_amazon='xx'
 
 gateway_endpoint = 'https://api.amazonalexa.com'
 malampe =  {"couleur":{
@@ -23,11 +31,11 @@ malampe =  {"couleur":{
 "brightness":80,
 "temperature":6500,
 "power":"OFF",
-"endpoint_id":"xxxxxxx",
+"endpoint_id":endpoint_id,
 "connectivity":{"value": "OK"}
 }
 
-access_token_from_amazon='xxxxx'
+
 def handle_accept_grant(alexa_request):
     auth_code = alexa_request["directive"]["payload"]["grant"]["code"]
     message_id = alexa_request["directive"]["header"]["messageId"]
@@ -194,11 +202,6 @@ def lambda_handler(event, context):
             # Note: This sample always returns a success response for either a request to TurnOff or TurnOn
             endpoint_id = event['directive']['endpoint']['endpointId']
             correlation_token = event['directive']['header']['correlationToken']
-            power_state_value =  {
-            "hue": 350.5,
-            "saturation": 0.7138,
-            "brightness": 0.6524
-            }
             apcr = AlexaResponse(namespace='Alexa', name='StateReport',correlation_token=correlation_token,endpoint_id=malampe["endpoint_id"],token="surplifetoken")
             apcr.add_context_property(namespace='Alexa.ColorController', name='color', value=malampe["couleur"])
             apcr.add_context_property(namespace='Alexa.ColorTemperatureController', name='colorTemperatureInKelvin', value=malampe["temperature"])
@@ -269,7 +272,7 @@ def lambda_handler(event, context):
         payload= {
             "change": {
                 "cause": {
-                    "type": "PHYSICAL_INTERACTION"
+                    "type": "VOICE_INTERACTION"
                 },
                 "properties": [{
                     "namespace": "Alexa.PowerController",
